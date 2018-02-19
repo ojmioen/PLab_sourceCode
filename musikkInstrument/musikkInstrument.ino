@@ -15,11 +15,13 @@ void loop() {
   int reading = analogRead(buttonPin);
   int potRead = analogRead(potPin);
   int pitch = getPitch(reading);
+  int shiftedPitch = shiftPitch(pitch, potRead);
+  Serial.println(shiftedPitch);
   if (pitch == 0) {
     noTone(speakerPin);
   }
   else {
-    tone(speakerPin, shiftPitch(pitch, potRead));
+    tone(speakerPin, shiftedPitch);
   }
   delay(100);
 }
@@ -64,7 +66,7 @@ int getPitch(int reading) {
 }
 
 int shiftPitch(int pitch, int potVal) {
-  int shiftedPitch = pitch + potVal*2;
+  int shiftedPitch = pitch + pitch*(5*potVal/1024);
   return shiftedPitch;
 }
 

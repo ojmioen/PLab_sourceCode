@@ -7,6 +7,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fiveBtnMenuBrowsing", "five
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "menuLED", "..\menuLED\menuLED.vcxproj", "{B0ECE3AC-2BEB-466E-946A-02065F283788}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "musikkInstrument", "..\musikkInstrument\musikkInstrument.vcxproj", "{9DAED737-91B8-46C0-ABAB-6C33885C6086}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimerSetMenuLCD", "..\TimerSetMenuLCD\TimerSetMenuLCD.vcxproj", "{C85EDBDB-3457-4475-8068-D8612C6D64E8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "2DLedMenu", "..\2DLedMenu\2DLedMenu.vcxproj", "{181DCAB0-D97F-400D-845F-E07ED15E3D8A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NumberSelectorWithLcd", "..\NumberSelectorWithLed\NumberSelectorWithLed.vcxproj", "{F51F87CF-014D-4B7F-817B-27A93588D844}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -21,6 +29,22 @@ Global
 		{B0ECE3AC-2BEB-466E-946A-02065F283788}.Debug|x86.Build.0 = Debug|Win32
 		{B0ECE3AC-2BEB-466E-946A-02065F283788}.Release|x86.ActiveCfg = Release|Win32
 		{B0ECE3AC-2BEB-466E-946A-02065F283788}.Release|x86.Build.0 = Release|Win32
+		{9DAED737-91B8-46C0-ABAB-6C33885C6086}.Debug|x86.ActiveCfg = Debug|Win32
+		{9DAED737-91B8-46C0-ABAB-6C33885C6086}.Debug|x86.Build.0 = Debug|Win32
+		{9DAED737-91B8-46C0-ABAB-6C33885C6086}.Release|x86.ActiveCfg = Release|Win32
+		{9DAED737-91B8-46C0-ABAB-6C33885C6086}.Release|x86.Build.0 = Release|Win32
+		{C85EDBDB-3457-4475-8068-D8612C6D64E8}.Debug|x86.ActiveCfg = Debug|Win32
+		{C85EDBDB-3457-4475-8068-D8612C6D64E8}.Debug|x86.Build.0 = Debug|Win32
+		{C85EDBDB-3457-4475-8068-D8612C6D64E8}.Release|x86.ActiveCfg = Release|Win32
+		{C85EDBDB-3457-4475-8068-D8612C6D64E8}.Release|x86.Build.0 = Release|Win32
+		{181DCAB0-D97F-400D-845F-E07ED15E3D8A}.Debug|x86.ActiveCfg = Debug|Win32
+		{181DCAB0-D97F-400D-845F-E07ED15E3D8A}.Debug|x86.Build.0 = Debug|Win32
+		{181DCAB0-D97F-400D-845F-E07ED15E3D8A}.Release|x86.ActiveCfg = Release|Win32
+		{181DCAB0-D97F-400D-845F-E07ED15E3D8A}.Release|x86.Build.0 = Release|Win32
+		{F51F87CF-014D-4B7F-817B-27A93588D844}.Debug|x86.ActiveCfg = Debug|Win32
+		{F51F87CF-014D-4B7F-817B-27A93588D844}.Debug|x86.Build.0 = Debug|Win32
+		{F51F87CF-014D-4B7F-817B-27A93588D844}.Release|x86.ActiveCfg = Release|Win32
+		{F51F87CF-014D-4B7F-817B-27A93588D844}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
