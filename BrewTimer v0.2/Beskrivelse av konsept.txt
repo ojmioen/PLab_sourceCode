@@ -1,0 +1,13 @@
+BrewTimer v1.0
+
+Som prosjekt for øving 3 i Programmeringslab har det blitt
+utviklet en bryggetimer, som holder styr på mesketid,
+koketid og opp til ti humletilsetningstider under koking. 
+Brukergrensesnittet bruker en 16x2 LCD-skjerm som viser
+menyene i programmet, og fem knapper (select, venstre, 
+høyre, opp og ned) for å navigere menyene. Apparatet
+er også utstyrt med en RGB-LED og en piezo-buzzer for å
+gi tilbakemelding til bryggeren når det er tid for å
+foreta seg noe. LED-en blinker rødt/orange når meskingen
+er ferdig, blått når humle skal tilsettes, og grønt når
+bryggingen er ferdig.
