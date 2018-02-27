@@ -54,7 +54,7 @@ String mmPages[] = { "Set mash time", "Set boil time", "Set hop times", "Start t
 const byte numOfMainMenuPages = 4;
 
 unsigned long prevMillis = 0;
-unsigned int refreshInterval = 5000; // 1 minute
+unsigned int refreshInterval = 60000; // 1 minute
 
 void setup()
 {
