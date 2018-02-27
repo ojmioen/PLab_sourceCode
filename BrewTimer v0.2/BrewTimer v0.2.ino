@@ -13,7 +13,6 @@ byte btnStates[] = { 0, 0, 0, 0, 0 };
 byte prevBtnStates[] = { 0, 0, 0, 0, 0 };
 const byte speakerPin = A5;
 
-
 const byte maxTime= 255;
 const byte minTime = 0;
 byte setMashTime = 0;
@@ -55,14 +54,14 @@ String mmPages[] = { "Set mash time", "Set boil time", "Set hop times", "Start t
 const byte numOfMainMenuPages = 4;
 
 unsigned long prevMillis = 0;
-int refreshInterval = 1000; // 1 second
+unsigned int refreshInterval = 5000; // 1 minute
 
 void setup()
 {
 	lcd.begin(16, 2);
 	lcd.clear();
 	lcd.home();
-	lcd.print("Brew timer v0.2");
+	lcd.print("Brew timer v1.0");
 	lcd.setCursor(0, 1);
 	lcd.print("Loading...");
 	Serial.begin(9600);
@@ -83,6 +82,7 @@ void loop()
 	if (mashTimerStarted && !mashTimerEnded) {
 		if (mashTimeCounter == 0) {
 			mashTimerEnded = true;
+			lcd.noBlink();
 			updateLcd();
 			timerEnd();
 		}
@@ -95,6 +95,7 @@ void loop()
 	else if (boilTimerStarted && !boilTimerEnded) {
 		if (boilTimeCounter == 0) {
 			boilTimerEnded = true;
+			lcd.noBlink();
 			updateLcd();
 			timerEnd();
 		}
@@ -105,7 +106,6 @@ void loop()
 			for (int i = 0; i < numberOfHopAddTimes; i++) {
 				if (hopAddTimes[i] >= boilTimeCounter) {
 					hopAlert(i);
-					hopAddTimes[i] = -1;
 				}
 			}
 		}
@@ -142,7 +142,7 @@ void updateLcd() {
 	lcd.clear();
 	lcd.home();
 	if (inStartScreen) {
-		lcd.print("BrewTimer v0.2");
+		lcd.print("BrewTimer v1.0");
 		lcd.setCursor(0, 1);
 		lcd.print(">press to start");
 		return;
@@ -209,7 +209,7 @@ void updateLcd() {
 			lcd.print("Mash time left:");
 			lcd.setCursor(0, 1);
 			lcd.print(mashTimeCounter);
-			lcd.print(" seconds");
+			lcd.print(" minutes");
 			return;
 		}
 		else {
@@ -224,7 +224,7 @@ void updateLcd() {
 			lcd.print("Boil time left:");
 			lcd.setCursor(0, 1);
 			lcd.print(boilTimeCounter);
-			lcd.print(" seconds");
+			lcd.print(" minutes");
 			return;
 		}
 		else {
@@ -289,6 +289,7 @@ void handleChBtnClick() {
 			boilTimeCounter = setBoilTime;
 			mashTimerStarted = true;
 			prevMillis = millis();
+			lcd.blink();
 		}
 		else {
 			inTimerStartMenu = false;
@@ -305,7 +306,13 @@ void handleChBtnClick() {
 			inMashTimerMenu = false;
 			inBoilTimerMenu = true;
 			boilTimerStarted = true;
+			lcd.blink();
 			prevMillis = millis();
+			for (int i = 0; i < numberOfHopAddTimes; i++) {
+				if (hopAddTimes[i] >= boilTimeCounter) {
+					hopAlert(i);
+				}
+			}
 		}
 	}
 	else if (inBoilTimerMenu) {
@@ -338,7 +345,9 @@ void handleUpBtnClick() {
 		}
 	}
 	else if (inHopAddSubMenu) {
-		if (dispHopAddTime < maxTime) {
+		byte maxHopTime;
+		setBoilTime > 0 ? maxHopTime = setBoilTime : maxHopTime = maxTime;		
+		if (dispHopAddTime < maxHopTime) {
 			dispHopAddTime++;
 		}
 	}
@@ -362,12 +371,12 @@ void handleDownBtnClick() {
 		}
 	}
 	else if (inSetHopAddTimesMenu) {
-		if (dispNumOfHopAdds >= minHopAdds) {
+		if (dispNumOfHopAdds > minHopAdds) {
 			dispNumOfHopAdds--;
 		}
 	}
 	else if (inHopAddSubMenu) {
-		if (dispHopAddTime >= minTime) {
+		if (dispHopAddTime > minTime) {
 			dispHopAddTime--;
 		}
 	}
@@ -497,6 +506,7 @@ void hopAlert(byte index) {
 			boilTimeCounter--;
 		}
 	}
+	hopAddTimes[index] = -1;
 	updateLcd();
 	return;
 }
