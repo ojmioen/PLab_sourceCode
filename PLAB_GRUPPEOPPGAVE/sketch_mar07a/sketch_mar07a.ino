@@ -19,7 +19,7 @@
 #define FORWARD_SPEED_B   300
 
 //Durations
-#define REVERSE_DURATION  200 // ms
+#define REVERSE_DURATION  250 // ms
 #define TURN_DURATION     250 // ms
 
 #define MAX_SONAR_DIST 40
@@ -57,7 +57,7 @@ boolean beastMode = false;
 
 
 void setup() {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   sensors.init();
   button.waitForButton();
 }
@@ -78,24 +78,15 @@ void pollSensor() {
   rightDist = rightSonar.ping_cm();
   leftDist = leftSonar.ping_cm();
   rearDist = rearSonar.ping_cm();
-  Serial.print("Front distance: ");
-  Serial.println(frontDist);
-  Serial.print("Right distance: ");
-  Serial.println(rightDist);
+  //Serial.print("Front distance: ");
+  //Serial.println(frontDist);
+  //Serial.print("Right distance: ");
+  //Serial.println(rightDist);
   
 }
 
 
-void handleSensors() {
-  int forwardSpeed;
-  if (beastMode) {
-    forwardSpeed = FORWARD_SPEED_B;
-  }
-  else {
-    forwardSpeed = FORWARD_SPEED;
-  }
-  
-  //Arrray sensors
+void lightSense() {
   if (sensor_values[0] < QTR_THRESHOLD){
     // if leftmost sensor detects line, reverse and turn to the right
     motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
@@ -110,11 +101,42 @@ void handleSensors() {
     motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
     delay(TURN_DURATION);
   }
+}
+
+
+void delayHandler(int delaySek) {
+  for(int i=0; i < delaySek; i+=1) {
+    lightSense();
+    delay(1);
+  }
+}
+
+
+void handleSensors() {
+  int forwardSpeed;
+  if (beastMode) {
+    forwardSpeed = FORWARD_SPEED_B;
+  }
+  else {
+    forwardSpeed = FORWARD_SPEED;
+  }
+  //Passer på å ikke kjøre ut
+  lightSense();
 
   //Front sensor
-  else if (frontDist > 0 && frontDist < 20) {
+  if (frontDist > 6 && frontDist < 20) {
     motors.setSpeeds(400, 400);
   }
+
+  //Front flick (BETA)
+  else if (frontDist > 0 && frontDist <= 6) {
+    motors.setSpeeds(-400, -100);
+    delay(450);
+    motors.setSpeeds(400, 400);
+    delay(TURN_DURATION - 150);
+  }
+
+  
   //Right sensor
   else if (rightDist > 0 && rightDist < 15) {
     motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
@@ -123,7 +145,8 @@ void handleSensors() {
   //Left sensor
   else if (leftDist > 0 && leftDist < 15) {
     motors.setSpeeds(TURN_SPEED, TURN_SPEED);
-    delay(TURN_DURATION - 100);    
+    delayHandler(TURN_DURATION + 200);
+    //delay(TURN_DURATION - 100);    
     motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
     delay(TURN_DURATION - 60);
   }
