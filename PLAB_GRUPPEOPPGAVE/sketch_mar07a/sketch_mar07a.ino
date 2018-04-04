@@ -5,12 +5,17 @@
 #include <ZumoBuzzer.h>
 #include <ZumoMotors.h>
 #include <ZumoReflectanceSensorArray.h>
+#include <SoftwareSerial.h>
 
 //SensorPins
 #define FRONT_PING_PIN 2
 #define RIGHT_PING_PIN 6
 #define LEFT_PING_PIN 3
 #define REAR_PING_PIN A1
+
+//Bluetooth pins
+#define TX_PIN A4
+#define RX_PIN A5
 
 //Speeds
 #define REVERSE_SPEED     250 // 0 is stopped, 400 is full speed
@@ -28,8 +33,10 @@
 
 //int forwardSpeed = FORWARD_SPEED;
 
+void(*resetFunc) (void) = 0;
 
 ZumoMotors motors;
+SoftwareSerial btSerial(TX_PIN, RX_PIN);
 
 //Sonar setup
 NewPing frontSonar(FRONT_PING_PIN, FRONT_PING_PIN, MAX_SONAR_DIST);
@@ -51,13 +58,14 @@ Pushbutton button(ZUMO_BUTTON);
 
 
 
-//char bluetoothVal;
+char bluetoothMsg;
 boolean beastMode = false;
 //boolean prevBeastMode = false;
 
 
 void setup() {
   //Serial.begin(9600);
+  btSerial.begin(9600);
   sensors.init();
   button.waitForButton();
 }
@@ -65,7 +73,7 @@ void setup() {
 
 void loop() {
   pollSensor();
-  //pullBluetooth();
+  pullBluetooth();
   sensors.read(sensor_values);
   handleSensors();
   
@@ -172,3 +180,18 @@ void handleSensors() {
     motors.setSpeeds(forwardSpeed, forwardSpeed);
   }
 }
+
+void pullBluetooth() {
+  if (btSerial.available()) {
+    bluetoothMsg = btSerial.read();
+    if (bluetoothMsg == 'b') {
+      beastMode = true;
+    } else if (bluetoothMsg == 'p') {
+      beastMode = false;
+    } else if (bluetoothMsg == 'k') {
+      motors.setSpeeds(0, 0);
+      resetFunc();
+    }
+  }
+}
+
