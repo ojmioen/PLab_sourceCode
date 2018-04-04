@@ -20,7 +20,7 @@
 //Speeds
 #define REVERSE_SPEED     250 // 0 is stopped, 400 is full speed
 #define TURN_SPEED        400
-#define FORWARD_SPEED     350
+#define FORWARD_SPEED     200
 #define FORWARD_SPEED_B   400
 
 //Durations
@@ -54,20 +54,21 @@ float rearDist = 0;
 unsigned int sensor_values[NUM_SENSORS];
 ZumoReflectanceSensorArray sensors;
 
-Pushbutton button(ZUMO_BUTTON);
-
-
+Pushbutton button(ZUMO_BUTTON, HIGH, HIGH);
 
 char bluetoothMsg;
 boolean beastMode = false;
-//boolean prevBeastMode = false;
-
 
 void setup() {
   //Serial.begin(9600);
   btSerial.begin(9600);
   sensors.init();
-  button.waitForButton();
+  while (true) {
+    if (button.isPressed() || pullBluetoothStart()) {
+      break;
+    }
+    delay(50);
+  }
 }
 
 
@@ -193,5 +194,15 @@ void pullBluetooth() {
       resetFunc();
     }
   }
+}
+
+boolean pullBluetoothStart() {
+  if (btSerial.available()) {
+    bluetoothMsg = btSerial.read();
+    if (bluetoothMsg == 's') {
+      return true;
+    }
+  }
+  return false;
 }
 
