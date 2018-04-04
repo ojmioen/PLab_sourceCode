@@ -15,11 +15,11 @@
 //Speeds
 #define REVERSE_SPEED     250 // 0 is stopped, 400 is full speed
 #define TURN_SPEED        400
-#define FORWARD_SPEED     170
-#define FORWARD_SPEED_B   300
+#define FORWARD_SPEED     350
+#define FORWARD_SPEED_B   400
 
 //Durations
-#define REVERSE_DURATION  200 // ms
+#define REVERSE_DURATION  250 // ms
 #define TURN_DURATION     250 // ms
 
 #define MAX_SONAR_DIST 40
@@ -57,7 +57,7 @@ boolean beastMode = false;
 
 
 void setup() {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   sensors.init();
   button.waitForButton();
 }
@@ -69,7 +69,7 @@ void loop() {
   sensors.read(sensor_values);
   handleSensors();
   
-  delay(50);
+  delay(30);
 }
 
 
@@ -78,11 +78,44 @@ void pollSensor() {
   rightDist = rightSonar.ping_cm();
   leftDist = leftSonar.ping_cm();
   rearDist = rearSonar.ping_cm();
-  Serial.print("Front distance: ");
-  Serial.println(frontDist);
-  Serial.print("Right distance: ");
-  Serial.println(rightDist);
+  //Serial.print("Front distance: ");
+  //Serial.println(frontDist);
+  //Serial.print("Right distance: ");
+  //Serial.println(rightDist);
   
+}
+
+
+int lightSense() {
+  if (sensor_values[0] < QTR_THRESHOLD){
+    // if leftmost sensor detects line, reverse and turn to the right
+    motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
+    delay(REVERSE_DURATION);
+    motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
+    delay(TURN_DURATION);
+    return 1;
+  }
+  else if (sensor_values[5] < QTR_THRESHOLD){
+    // if rightmost sensor detects line, reverse and turn to the left
+    motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
+    delay(REVERSE_DURATION);
+    motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
+    delay(TURN_DURATION);
+    return 1;
+  }
+  return 0;
+}
+
+
+int delayHandler(int delaySek) {
+  for(int i=0; i < delaySek; i+=5) {
+    sensors.read(sensor_values);
+    if (lightSense() == 1) {
+      return 1 ;
+    }
+    delay(5);
+  }
+  return 0;
 }
 
 
@@ -95,42 +128,44 @@ void handleSensors() {
     forwardSpeed = FORWARD_SPEED;
   }
   
-  //Arrray sensors
-  if (sensor_values[0] < QTR_THRESHOLD){
-    // if leftmost sensor detects line, reverse and turn to the right
-    motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
-    delay(REVERSE_DURATION);
-    motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
-    delay(TURN_DURATION);
-  }
-  else if (sensor_values[5] < QTR_THRESHOLD){
-    // if rightmost sensor detects line, reverse and turn to the left
-    motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
-    delay(REVERSE_DURATION);
-    motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
-    delay(TURN_DURATION);
-  }
+  //Passer på å ikke kjøre ut
+  lightSense();
 
   //Front sensor
-  else if (frontDist > 0 && frontDist < 20) {
+  if (frontDist > 0 && frontDist < 20) {
     motors.setSpeeds(400, 400);
   }
+
+  //Front flick (BETA)
+  else if (frontDist > 0 && frontDist <= 6) {
+    motors.setSpeeds(-400, -100);
+    delay(450);
+    motors.setSpeeds(400, 400);
+    delay(TURN_DURATION - 150);
+  }
+
+  
   //Right sensor
   else if (rightDist > 0 && rightDist < 15) {
     motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
-    delay(TURN_DURATION - 90);
+    delay(TURN_DURATION - 120);
   }
   //Left sensor
   else if (leftDist > 0 && leftDist < 15) {
     motors.setSpeeds(TURN_SPEED, TURN_SPEED);
-    delay(TURN_DURATION - 100);    
+    //motors.setSpeeds(80, 80);
+
+    if (delayHandler(TURN_DURATION - 50) == 0) {
+    motors.setSpeeds(-400, -400);
+    delay(180); 
     motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
     delay(TURN_DURATION - 60);
+    }
   }
   //Rear sensor
   else if (rearDist > 0 && rearDist < 15) {
-    motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
-    delay(TURN_DURATION);
+    motors.setSpeeds(TURN_SPEED, TURN_SPEED - 200);
+    delayHandler(TURN_DURATION);
   }
   //Else
   else {
