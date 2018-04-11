@@ -20,7 +20,7 @@
 //Speeds
 #define REVERSE_SPEED     250 // 0 is stopped, 400 is full speed
 #define TURN_SPEED        400
-#define FORWARD_SPEED     200
+#define FORWARD_SPEED     350
 #define FORWARD_SPEED_B   400
 
 //Durations
@@ -141,16 +141,13 @@ void handleSensors() {
   lightSense();
 
   //Front sensor
-  if (frontDist > 0 && frontDist < 20) {
-    motors.setSpeeds(400, 400);
+  if (frontDist > 6 && frontDist < 20) {
+    motors.setSpeeds(400, 400);    
   }
 
   //Front flick (BETA)
   else if (frontDist > 0 && frontDist <= 6) {
-    motors.setSpeeds(-400, -100);
-    delay(450);
-    motors.setSpeeds(400, 400);
-    delay(TURN_DURATION - 150);
+    motors.setSpeeds(200, 200);
   }
 
   
@@ -205,4 +202,3 @@ boolean pullBluetoothStart() {
   }
   return false;
 }
-
